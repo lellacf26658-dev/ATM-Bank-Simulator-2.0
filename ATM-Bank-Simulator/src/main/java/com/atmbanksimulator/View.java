@@ -42,7 +42,7 @@ class View {
         buttonPane.setId("Buttons"); // assign an id to be used in css file
 
         // controls
-        laMsg = new Label("Welcome to Bank-ATM");  // Message bar at the top
+        laMsg = new Label("Welcome to Bank-ATM - Made By Brighton ");  // Message bar at the top
         grid.add(laMsg, 0, 0);         // Add to GUI at the top
 
         tfInput = new TextField();     // text field for numbers
@@ -110,7 +110,7 @@ class View {
     // - taResultMsg → shown in the text area (instructions / results)
     public void update(String msg,String tfInputMsg,String taResultMsg)
     {
-        laMsg.setText(msg);
+        laMsg.setText(msg + " - Made by Brighton ");
         tfInput.setText(tfInputMsg);
         taResult.setText(taResultMsg);
     }
