@@ -3,7 +3,7 @@ package com.atmbanksimulator;
 import javafx.application.Application;
 import javafx.stage.Stage;
 
-// 🧍Think of MVC like a human body:
+// MVC Structure Analogy:
 // - View is the face and senses: it shows things and receives input.
 // - Controller is the nerves: it carries signals to the brain and triggers actions.
 // - UIModel is the brain: it holds state and logic, and queries domain services.
@@ -11,26 +11,31 @@ import javafx.stage.Stage;
 // Together, they simulate how an ATM thinks, reacts, and handles money.
 
 public class Main extends Application {
-    public static void main( String args[] ) {launch(args);}
+    public static void main(String args[]) {
+        launch(args);
+    }
 
     public void start(Stage window) {
-        // Create a Bank object add two bank accounts for test
+        // Create a Bank object
         Bank bank = new Bank();
-        bank.addBankAccount("10001", "11111", 100);
-        bank.addBankAccount("10002", "22222", 50);
 
-        //UIModel-View-Controller structure setup
-        // Create the UIModel, View and Controller objects and link them together
-        UIModel UIModel = new UIModel(bank);   // the UIModel needs the Bank object to 'talk to' the bank
-        View  view  = new View();
-        Controller controller  = new Controller();
+        // Add test accounts with different types
+        bank.addBankAccount("10001", "11111", 100, Bank.AccountType.STANDARD);
+        bank.addBankAccount("10002", "22222", 50, Bank.AccountType.STUDENT);
+        bank.addBankAccount("10003", "33333", 1000, Bank.AccountType.PRIME);
+        bank.addBankAccount("10004", "44444", 500, Bank.AccountType.SAVING);
 
-        // Link them together so they can talk to each other
+        // Setup MVC structure
+        UIModel UIModel = new UIModel(bank);
+        View view = new View();
+        Controller controller = new Controller();
+
+        // Link MVC components together
         view.controller = controller;
         controller.UIModel = UIModel;
         UIModel.view = view;
 
-        // start up the GUI (view), and then tell the UIModel to initialise itself
+        // Start the GUI and initialize the UIModel
         view.start(window);
         UIModel.initialise();
     }
