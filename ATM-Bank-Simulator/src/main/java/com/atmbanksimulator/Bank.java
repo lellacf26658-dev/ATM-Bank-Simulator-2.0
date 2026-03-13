@@ -1,10 +1,15 @@
 package com.atmbanksimulator;
 
-// ===== 📚🌐Bank (Domain / Service / Business Logic) =====
+// ===== Bank (Domain / Service / Business Logic) =====
 
 // Bank class: a simple implementation of a bank, containing a list of bank accounts
 // and has a currently logged-in account (loggedInAccount).
 public class Bank {
+
+    // Enum representing different types of bank accounts
+    public enum AccountType {
+        STANDARD, STUDENT, PRIME, SAVING
+    }
 
     // ToDO: Optional extension:
     // Improve account management in the Bank class:
@@ -17,14 +22,26 @@ public class Bank {
     private BankAccount[] accounts = new BankAccount[maxAccounts];  // Array to hold BankAccount objects
     private BankAccount loggedInAccount = null;         // Currently logged-in account ('null' if no one is logged in)
 
-    // a method to create new BankAccount - this is known as a 'factory method' and is a more
-    // flexible way to do it than just using the 'new' keyword directly.
+    // Factory method to create a new BankAccount
     public BankAccount makeBankAccount(String accNumber, String accPasswd, int balance) {
         return new BankAccount(accNumber, accPasswd, balance);
     }
 
-    // a method to add a new bank account to the bank - it returns true if it succeeds
-    // or false if it fails (because the bank is 'full')
+    // Factory method to create a BankAccount based on account type
+    public BankAccount makeBankAccount(String accNumber, String accPasswd, int balance, AccountType type) {
+        switch (type) {
+            case STUDENT:
+                return new StudentAccount(accNumber, accPasswd, balance);
+            case PRIME:
+                return new PrimeAccount(accNumber, accPasswd, balance);
+            case SAVING:
+                return new SavingAccount(accNumber, accPasswd, balance);
+            default:
+                return new BankAccount(accNumber, accPasswd, balance);
+        }
+    }
+
+    // Add a BankAccount object to the bank
     public boolean addBankAccount(BankAccount a) {
         if (numAccounts < maxAccounts) {
             accounts[numAccounts] = a;
@@ -35,54 +52,45 @@ public class Bank {
         }
     }
 
-    // Variant of addBankAccount: creates a BankAccount and adds it in one step.
-    // This is an example of method overloading: two methods can share the same name
-    // if they have different parameter lists.
+    // Create and add a BankAccount using account number, password, and balance
     public boolean addBankAccount(String accNumber, String accPasswd, int balance) {
         return addBankAccount(makeBankAccount(accNumber, accPasswd, balance));
     }
 
-    // Check whether the given accountNumber and password match an existing BankAccount.
-    // If successful, set 'loggedInAccount' to that account and return true.
-    // Otherwise, set 'loggedInAccount' to null and return false.
+    // Create and add a BankAccount with a specific account type
+    public boolean addBankAccount(String accNumber, String accPasswd, int balance, AccountType type) {
+        return addBankAccount(makeBankAccount(accNumber, accPasswd, balance, type));
+    }
+
+    // Attempt to log in with the given account number and password
     public boolean login(String accountNumber, String password) {
         logout(); // logout of any previous loggedInAccount
 
-        // Search the accounts array to find a BankAccount with a matching accountNumber and password.
-        // - If found, set 'loggedInAccount' to that account and return true.
-        // - If not found, reset 'loggedInAccount' to null and return false.
+        // Search the accounts array for a matching account number and password
         for (BankAccount b: accounts) {
-            if (b.getAccNumber().equals(accountNumber) && b.getaccPasswd().equals(password)) {
-                // found the right account
+            if (b != null && b.getAccNumber().equals(accountNumber) && b.getaccPasswd().equals(password)) {
                 loggedInAccount = b;
                 return true;
             }
         }
-        // not found - return false
         loggedInAccount = null;
         return false;
     }
 
-    // Log out of the currently logged-in account, if any
+    // Log out the currently logged-in account
     public void logout() {
         if (loggedIn()) {
             loggedInAccount = null;
         }
     }
 
-    // Check whether the bank currently has a logged-in account
+    // Check if there is a logged-in account
     public boolean loggedIn() {
-        if (loggedInAccount == null) {
-            return false;
-        } else {
-            return true;
-        }
+        return loggedInAccount != null;
     }
 
-    // Attempt to deposit money into the currently logged-in account
-    // by calling the deposit method of the BankAccount object
-    public boolean deposit(int amount)
-    {
+    // Deposit amount into the logged-in account
+    public boolean deposit(int amount) {
         if (loggedIn()) {
             return loggedInAccount.deposit(amount);
         } else {
@@ -90,11 +98,8 @@ public class Bank {
         }
     }
 
-
-    // Attempt to withdraw money from the currently logged-in account
-    // by calling the withdraw method of the BankAccount object
-    public boolean withdraw(int amount)
-    {
+    // Withdraw amount from the logged-in account
+    public boolean withdraw(int amount) {
         if (loggedIn()) {
             return loggedInAccount.withdraw(amount);
         } else {
@@ -102,16 +107,15 @@ public class Bank {
         }
     }
 
-    // get the currently logged-in account balance
-    // by calling the getBalance method of the BankAccount object
-    public int getBalance()
-    {
+    // Get the balance of the logged-in account
+    public int getBalance() {
         if (loggedIn()) {
             return loggedInAccount.getBalance();
         } else {
-            return -1; // use -1 as an indicator of an error
+            return -1; // Error indicator
         }
     }
+
     /*
      * Author: Daniella
      *
