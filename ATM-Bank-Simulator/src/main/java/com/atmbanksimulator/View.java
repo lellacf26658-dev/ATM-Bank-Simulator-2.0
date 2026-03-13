@@ -42,15 +42,21 @@ class View {
         buttonPane.setId("Buttons"); // assign an id to be used in css file
 
         // controls
-        laMsg = new Label("Welcome to Bank-ATM - Made By Brighton ");  // Message bar at the top
+        laMsg = new Label("Welcome to Brighton Bank ATM — Please select a transaction");  // Message bar at the top (changed harouns messsage)
+        laMsg.setFont(new Font("Arial", 22)); //better font
         grid.add(laMsg, 0, 0);         // Add to GUI at the top
 
         tfInput = new TextField();     // text field for numbers
-        tfInput.setEditable(false);     // Read only (user can't type in)
+        tfInput.setEditable(false);// Read only (user can't type in)
+        tfInput.setPromptText("Enter amount"); // message for user
+        tfInput.setFont(new Font("Consolas", 20)); // font better
+        tfInput.setStyle("-fx-alignment: center;"); //numbers centered
         grid.add(tfInput, 0, 1);    // Add to GUI on second row
 
         taResult = new TextArea();         // text area for instructions, transaction results
         taResult.setEditable(false);       // Read only
+        taResult.setText("Select a transaction:\nDep = Deposit\nW/D = Withdraw\nBal = Balance\nEnt = Confirm\nCLR = Clear");
+        // the above gives instructions when ATM starts for user to understand the buttons
         scrollPane  = new ScrollPane();    // create a scrolling window
         scrollPane.setContent(taResult);   // put the text area 'inside' the scrolling window
         grid.add( scrollPane, 0, 2);    // add the scrolling window to GUI on third row
@@ -74,7 +80,7 @@ class View {
                     // non-empty string - make a button
                     Button btn = new Button( text );
                     btn.setOnAction( this::buttonClicked );
-                              // Register event handler: call buttonClicked() whenever this button is pressed
+                    // Register event handler: call buttonClicked() whenever this button is pressed
                     buttonPane.getChildren().add( btn );    // add this button to tiled pane
                 } else {
                     // empty string - make an empty Text element as a spacer
@@ -86,7 +92,7 @@ class View {
 
         // add the complete GUI to the window and display it
         Scene scene = new Scene(grid, W, H);
-        scene.getStylesheets().add("atm.css"); // tell to use our css file
+        scene.getStylesheets().add("atm.css");
         window.setScene(scene);
         window.setTitle("ATM-Bank Simulator"); //set window title
         window.show();
@@ -96,22 +102,38 @@ class View {
     // This method is called when a button is pressed
     // It fetches the label on the button and passes it to the controller's process method
     private void buttonClicked(ActionEvent event) {
-        // this line asks the event to provide the actual Button object that was clicked
         Button b = ((Button) event.getSource());
-        String text = b.getText();   // get the button label
-        System.out.println( "View::buttonClicked: label = "+ text );
-        controller.process( text );  // Pass it to the controller's process method
+        String text = b.getText();
+        // max length added of 4 digits
+        if (tfInput.getText().length() >= 4 && text.matches("\\d")) {     // digit (0-9)
+            taResult.setText("Maximum amount length reached.");
+            return;
+        }
+        controller.process(text);
     }
 
     // This method is called by the UIModel whenever the UIModel changes.
     // It receives updated information from the UIModel and displays them in the GUI.
     // - msg → shown in the top message label
     // - tfInputMsg → shown in the text field (user input area)
-    // - taResultMsg → shown in the text area (instructions / results)
+    // - taResultMsg → shown in the text area (instructions / results)\
+
     public void update(String msg,String tfInputMsg,String taResultMsg)
     {
-        laMsg.setText(msg + " - Made by Brighton ");
+        if (msg.contains("Welcome")) {
+            return;
+        }
+        if (msg.contains("GOODBYE") || msg.contains("Thank") || msg.contains("not logged")) {
+            showGoodbyeScreen();
+            return;
+        }
+        laMsg.setText(msg);
         tfInput.setText(tfInputMsg);
         taResult.setText(taResultMsg);
+    }
+    private void showGoodbyeScreen() {
+        laMsg.setText("Goodbye! See you later");
+        tfInput.clear();
+        taResult.setText("Thank you for using HARD ATM.\nHave a nice day.");
     }
 }
