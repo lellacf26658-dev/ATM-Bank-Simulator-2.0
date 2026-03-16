@@ -69,8 +69,10 @@ class View {
                 {"1",    "2",  "3",  "",  "Bal",  "Fin"},
                 {"CLR",  "0",  "ChP",   "",  "",     "Ent"} };
 
+
         // Build the button panel, loop through the array,
         // - For non-empty strings, create a Button
+        // Bro work
         // - For empty strings, add an empty Text element as a spacer
         // Add all elements to the buttonPane (a tiled pane),
         // then place the buttonPane into the main grid as the fourth row.
