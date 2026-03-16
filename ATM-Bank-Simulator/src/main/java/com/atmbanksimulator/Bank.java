@@ -156,4 +156,17 @@ public class Bank {
 
         return false;
     }
+
+    /*
+     * Author: Haaroun
+     *
+     * Bridge method to connect the UI to the BankAccount logic
+     * for changing the password of the logged-in account.
+     */
+    public boolean changePassword(String old, String newP) {
+        if (loggedIn()) {
+            return loggedInAccount.changePassword(old, newP);
+        }
+        return false;
+    }
 }

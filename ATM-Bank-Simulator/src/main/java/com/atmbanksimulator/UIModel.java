@@ -20,11 +20,15 @@ public class UIModel {
     private final String STATE_ACCOUNT_NO = "account_no";
     private final String STATE_PASSWORD = "password";
     private final String STATE_LOGGED_IN = "logged_in";
+    // Author: Haaroun - New state for changing the password
+    private final String STATE_CH_PASS = "change_password";
 
     // Variables representing the state and data of the ATM UIModel
     private String state = STATE_ACCOUNT_NO;    // Current state of the ATM
     private String accNumber = "";         // Account number being typed
     private String accPasswd = "";         // Password being typed
+    // Author: Haaroun - Stores the old password for validation during change
+    private String oldPasswd = "";
 
     // Variables shown on the View display
     private String message;                // Message label text
@@ -75,11 +79,15 @@ public class UIModel {
 
     // Handle a number button press: append the digit to numberPadInput
     public void processNumber(String numberOnButton) {
-        // Optional extension:
-        // Improve feedback by showing what the number is being entered for based on the current state.
-        // e.g.  if state is STATE_ACCOUNT_NO, display "Receiving Account Number, Beep 5 received"
-        numberPadInput += numberOnButton;
-        message = "Beep! " + numberOnButton + " received";
+        // Author: Haaroun - Added length check to prevent UI overflow
+        if (numberPadInput.length() < 8) {
+            numberPadInput += numberOnButton;
+            message = "Beep! " + numberOnButton + " received";
+            result = ""; // Clear any previous error messages
+        } else {
+            message = "Input too long!";
+            result = "Maximum amount length reached.";
+        }
         update();
     }
 
@@ -123,9 +131,9 @@ public class UIModel {
                 break;
 
             case STATE_PASSWORD:
-                    // Waiting for a password
-                    // Save the typed number as accPasswd, clear numberPadInput,
-                    // then contact the bank to attempt login
+                // Waiting for a password
+                // Save the typed number as accPasswd, clear numberPadInput,
+                // then contact the bank to attempt login
                 accPasswd = numberPadInput;
                 numberPadInput = "";
                 if ( bank.login(accNumber, accPasswd) )
@@ -141,6 +149,21 @@ public class UIModel {
                 }
                 break;
 
+            // Author: Haaroun - Handle the "Enter" press when changing password
+            case STATE_CH_PASS:
+                String newPasswd = numberPadInput;
+                if (bank.changePassword(accPasswd, newPasswd)) {
+                    accPasswd = newPasswd; // Update local reference
+                    message = "Password Changed Successfully";
+                    setState(STATE_LOGGED_IN);
+                    result = "Main Menu\nChoose an option.";
+                } else {
+                    message = "Change Failed: min 4 digits";
+                    result = "Try again: Enter NEW Password\nFollowed by 'Ent'";
+                }
+                numberPadInput = "";
+                break;
+
             case STATE_LOGGED_IN:
             default:
                 // Do nothing for other states (user is already logged in)
@@ -153,11 +176,6 @@ public class UIModel {
      * Parses a string into a valid transaction amount.
      * - If the string is empty, invalid, or consists only of zeros, returns 0.
      * - Otherwise, returns the integer value.
-     *
-     * Purpose:
-     * Helper method for validating user-entered amounts in transactions (Deposit, Withdraw, etc.).
-     *
-     * Note: If you later add features like Transfer, this method can be reused.
      */
     private int parseValidAmount(String number) {
         if (number.isEmpty()) {
@@ -171,8 +189,6 @@ public class UIModel {
     }
 
     // Handle the Balance button:
-    // - If the user is logged in, retrieve the current balance and update messages/results accordingly
-    // - Otherwise, reset the ATM and display an error message
     public void processBalance() {
         if (state.equals(STATE_LOGGED_IN) ) {
             numberPadInput = "";
@@ -185,9 +201,6 @@ public class UIModel {
     }
 
     // Handle the Withdraw button:
-    // If the user is logged in, attempt to withdraw the amount entered;
-    // otherwise, reset the ATM and display an error message.
-    // Reads the amount from numberPadInput, validates it, and updates messages/results accordingly.
     public void processWithdraw() {
         if (state.equals(STATE_LOGGED_IN)) {
             int amount = parseValidAmount(numberPadInput);
@@ -214,9 +227,6 @@ public class UIModel {
     }
 
     // Handle the Deposit button:
-    // - If the user is logged in, deposit the amount entered into the bank
-    // - Reads the amount from numberPadInput, validates it, and updates messages/results accordingly
-    // - Otherwise, reset the ATM and display an error message
     public void processDeposit() {
         if (state.equals(STATE_LOGGED_IN)) {
             int amount = parseValidAmount(numberPadInput);
@@ -247,7 +257,6 @@ public class UIModel {
             if (amount > 0) {
 
                 // NOTE: For now the target account is hardcoded
-                // Later we must extend the UI to enter this
                 String targetAccount = accNumber;
 
                 boolean success = bank.transfer(targetAccount, amount);
@@ -274,9 +283,20 @@ public class UIModel {
         update();
     }
 
+    // Author: Haaroun - Handle the ChP button press
+    public void processChP() {
+        if (state.equals(STATE_LOGGED_IN)) {
+            setState(STATE_CH_PASS);
+            numberPadInput = "";
+            message = "Changing Password";
+            result = "Enter NEW Password\nFollowed by \"Ent\"";
+        } else {
+            reset("You are not logged in");
+        }
+        update();
+    }
+
     // Handle the Finish button:
-    // - If the user is logged in, log out
-    // - Otherwise, reset the ATM and display an error message
     public void processFinish() {
         if (state.equals(STATE_LOGGED_IN) ) {
             reset("Thank you for using the Bank ATM");
@@ -288,7 +308,6 @@ public class UIModel {
     }
 
     // Handle unknown or invalid buttons for the current state:
-    // - Reset the ATM and display an "Invalid Command" message
     public void processUnknownKey(String action) {
         reset("Invalid Command");
         update();
@@ -299,4 +318,3 @@ public class UIModel {
         view.update(message,numberPadInput, result);
     }
 }
-
