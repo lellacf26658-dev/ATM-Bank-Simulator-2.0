@@ -35,7 +35,7 @@ class View {
         // 1. A message label
         // 2. A text field showing numbers
         // 3. A text area showing transaction results, summaries, and user instructions
-        // 4. A tiled panel of buttons
+        // tiled panel of buttons
         grid = new GridPane(); // top layout
         grid.setId("Layout");  // assign an id to be used in css file
         buttonPane = new TilePane(); //
@@ -67,10 +67,12 @@ class View {
                 {"7",    "8",  "9",  "",  "Dep",  ""},
                 {"4",    "5",  "6",  "",  "W/D",  ""},
                 {"1",    "2",  "3",  "",  "Bal",  "Fin"},
-                {"CLR",  "0",  "",   "",  "",     "Ent"} };
+                {"CLR",  "0",  "ChP",   "",  "",     "Ent"} };
+
 
         // Build the button panel, loop through the array,
         // - For non-empty strings, create a Button
+        // Bro work
         // - For empty strings, add an empty Text element as a spacer
         // Add all elements to the buttonPane (a tiled pane),
         // then place the buttonPane into the main grid as the fourth row.
@@ -104,8 +106,8 @@ class View {
     private void buttonClicked(ActionEvent event) {
         Button b = ((Button) event.getSource());
         String text = b.getText();
-        // max length added of 4 digits
-        if (tfInput.getText().length() >= 4 && text.matches("\\d")) {     // digit (0-9)
+        // max length added of 5 digits
+        if (tfInput.getText().length() >= 5 && text.matches("\\d")) {     // digit (0-9)
             taResult.setText("Maximum amount length reached.");
             return;
         }

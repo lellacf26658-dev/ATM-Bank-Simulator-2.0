@@ -32,9 +32,15 @@ public class Controller {
             case "Bal":
                 UIModel.processBalance();
                 break;
-                //Added Transfer feature to Controller and UIModel - Daniella
+            //Added Transfer feature to Controller and UIModel - Daniella
             case "Trf":
                 UIModel.processTransfer();
+                break;
+            /*
+             * Added Change Password (ChP) feature to the Controller - Haaroun
+             */
+            case "ChP":
+                UIModel.processChP();
                 break;
             case "Fin":
                 UIModel.processFinish();
@@ -46,5 +52,3 @@ public class Controller {
     }
 
 }
-
-

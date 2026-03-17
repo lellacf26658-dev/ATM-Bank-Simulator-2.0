@@ -70,4 +70,19 @@ public class BankAccount {
     protected void setBalance(int newBalance) {
         this.balance = newBalance;
     }
+
+    // Haaroun: Logic to change the password
+    public boolean changePassword(String oldPassword, String newPassword) {
+        // 1. Check if the old password provided matches the one we have stored
+        if (this.accPasswd.equals(oldPassword)) {
+
+            // 2. Validation: Ensure the new password isn't empty and is at least 5 characters
+            if (newPassword != null && newPassword.length() >= 5) {
+                this.accPasswd = newPassword; // Update to the new password
+                return true; // Success!
+            }
+        }
+        // If the old password was wrong OR the new one was too short
+        return false;
+    }
 }
