@@ -1,10 +1,12 @@
 package com.atmbanksimulator;
 
-import javafx.application.Application;
+// Launcher
+// Entry point that launches the JavaFX Application.
+// This class exists because some IDE/build setups require a non-JavaFX
+// main class to avoid module issues when launching.
 
-//A simulation of ATM operations connected to real bank loggedInAccount management.
 public class Launcher {
     public static void main(String[] args) {
-        Application.launch(Main.class, args);
+        javafx.application.Application.launch(Main.class, args);
     }
 }
