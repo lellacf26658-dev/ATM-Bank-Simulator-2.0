@@ -4,11 +4,19 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
+<<<<<<< HEAD
         <option value="$PROJECT_DIR$/ATM-Bank-Simulator-2.0 copy/ATM-Bank-Simulator/pom.xml" />
       </list>
     </option>
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_21" default="true" project-jdk-name="21 (2)" project-jdk-type="JavaSDK">
+=======
+        <option value="$PROJECT_DIR$/ATM-Bank-Simulator/pom.xml" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectRootManager" version="2" languageLevel="JDK_21" project-jdk-name="21 (2)" project-jdk-type="JavaSDK">
+>>>>>>> fdde64be640f6127ce8db89be19b7b693ed17b33
     <output url="file://$PROJECT_DIR$/out" />
   </component>
 </project>
